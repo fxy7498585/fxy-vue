@@ -14,23 +14,30 @@
     </div>
    
      <div class="editor-content-mavon">
-       <mavon-editor v-model="form.editorValue" :toolbars="markdownOption" @imgAdd="imgAdd" style="width: 100%;"/>
+       <mavon-editor :ishljs="true" ref=md v-model="form.editorValue" :toolbars="markdownOption" @imgAdd="imgAdd" @save="save" style="width: 100%;"/>
      </div>
      <div class="editor-content-operation">
-       <el-button type="primary" round @click="addMarkdownArticle">增加文章</el-button>
+       
+       <el-button type="primary" round @click="updateMarkdownArticle" v-if="editButton">修改文章</el-button>
+       <el-button type="primary" round @click="addMarkdownArticle" v-else>增加文章</el-button>
+       <el-button round v-if="editButton" @click="backList">返回列表</el-button>
      </div>
   </div>
 </template>
 
 <script>
+import { mapState, mapActions } from 'vuex'
+import moment from 'moment'
 export default {
   name: 'MarkDownAddComponent',
+  components: {
+  },
   data() {
     return {
       categoryList: [
         {
-          label: 'JavasScript',
-          value: 'JavasScript'
+          label: 'JavaScript',
+          value: 'JavaScript'
         },
         {
           label: 'CSS',
@@ -68,8 +75,8 @@ export default {
         /* 1.3.5 */
         undo: true, // 上一步
         redo: true, // 下一步
-        trash: true, // 清空
-        save: false, // 保存（触发events中的save事件）
+        trash: false, // 清空
+        save: true, // 保存（触发events中的save事件）
         /* 1.4.2 */
         navigation: true, // 导航目录
         /* 2.1.8 */
@@ -79,15 +86,112 @@ export default {
         /* 2.2.1 */
         subfield: true, // 单双栏模式
         preview: true, // 预览
-      }
+      },
+      editButton: false,
     }
   },
+
+  created() {
+    if (JSON.stringify(this.$route.params) !== '{}') {
+      this.editButton = true;
+      this.form = {...this.$route.params}
+    }
+  },
+
+  computed: {
+    ...mapState({
+      markdown: 'MarkDownMOdule'
+    })
+  },
+
   methods: {
+    ...mapActions([
+      'addMarkDownArticle',
+      'updateArticle'
+    ]),
+    save() {
+const {name, category, editorValue} = this.form;
+      if (!name || !category || !editorValue) {
+        this.$message({
+          message: '文章内容请填写完整',
+          type: 'warning'
+        });
+        return;
+      }
+      let updateTime = moment().format("YYYY-MM-DD HH:mm:ss");
+      this.updateArticle({
+        type: 'updateArticle',
+        payload: {...this.form, updateTime}
+      }).then(res => {
+        if (res.code === 0) {
+          this.$message({
+            message: res.message,
+            type: 'success'
+          });
+        }
+      });
+    },
+    backList() {
+      this.$router.push({name: 'MarkDownListComponent'})
+    },
+    updateMarkdownArticle() {
+      const {name, category, editorValue} = this.form;
+      if (!name || !category || !editorValue) {
+        this.$message({
+          message: '文章内容请填写完整',
+          type: 'warning'
+        });
+        return;
+      }
+      let updateTime = moment().format("YYYY-MM-DD HH:mm:ss");
+      this.updateArticle({
+        type: 'updateArticle',
+        payload: {...this.form, updateTime}
+      }).then(res => {
+        if (res.code === 0) {
+          this.$message({
+            message: res.message,
+            type: 'success'
+          });
+          this.$router.push({name: 'MarkDownListComponent'})
+        }
+      });
+    },
     addMarkdownArticle() {
-      console.log({...this.form});
+      const {name, category, editorValue} = this.form;
+      if (!name || !category || !editorValue) {
+        this.$message({
+          message: '文章内容请填写完整',
+          type: 'warning'
+        });
+        return;
+      }
+      let createTime = moment().format("YYYY-MM-DD HH:mm:ss");
+      let updateTime = moment().format("YYYY-MM-DD HH:mm:ss");
+      this.addMarkDownArticle({...this.form, createTime, updateTime}).then(res => {
+        if (res.code === 0) {
+          this.$message({
+            message: res.message,
+            type: 'success'
+          });
+        }
+      });
     },
     imgAdd(pos, file) {
-      console.log(pos, file)
+      const formData = new FormData();
+      formData.append('file', file);
+      this.axios({
+        method: 'POST',
+        url: this.$baseUrl + '/api/upload/img',
+        data: formData
+      }).then(res => {
+        const { data } = res;
+        if (data.res.status === 200) {
+          this.$refs.md.$img2Url(pos, data.url);
+        }
+      }).catch(err => {
+        throw new Error(err)
+      });
     }
   }
 }
@@ -107,6 +211,8 @@ export default {
      display: flex;
      flex-direction: row;
      justify-content: flex-start;
+     overflow: hidden;
+     padding: 10px 20px;
    }
 
    &-form {
