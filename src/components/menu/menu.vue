@@ -15,12 +15,12 @@
         </template>
         <el-menu-item-group>
           <!-- <span slot="title">分组一</span> -->
-          <el-menu-item index="/">文章列表</el-menu-item>
-          <el-menu-item index="/markdown-add">添加文章</el-menu-item>
+          <el-menu-item index="/admin">文章列表</el-menu-item>
+          <el-menu-item index="/admin/markdown-add">添加文章</el-menu-item>
         </el-menu-item-group>
         <!-- title="分组2" -->
         <el-menu-item-group >
-          <el-menu-item index="/demo/list">demo列表</el-menu-item>
+          <el-menu-item index="/admin/demo/list">demo列表</el-menu-item>
         </el-menu-item-group>
         <!-- <el-submenu index="1-4">
           <span slot="title">选项4</span>

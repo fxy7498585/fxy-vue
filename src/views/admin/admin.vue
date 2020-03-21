@@ -1,20 +1,19 @@
 <template>
   <div id="app" class="app-wrap">
-    <!-- <div id="nav" class="app-wrap-menu">
+    <div id="nav" class="app-wrap-menu">
       <Menu></Menu>
     </div>
     <div class="app-wrap-content">
       <router-view/>
-    </div> -->
-    <router-view/>
+    </div>
   </div>
 </template>
 
 <script>
-// import Menu from './components/menu/menu';
+import Menu from '../../components/menu/menu';
 export default {
   components: {
-    // Menu,
+    Menu,
   }
 }
 </script>
