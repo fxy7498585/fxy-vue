@@ -20,7 +20,7 @@ Vue.config.productionTip = false
 if (process.env.NODE_ENV == 'development') {
   Vue.prototype.$baseUrl = "https://localhost:3000";
 } else if (process.env.NODE_ENV == 'production') {
-  Vue.prototype.$baseUrl = "https://www.fxy-top.top";
+  Vue.prototype.$baseUrl = "http://www.fxy-top.top";
 }
 
 new Vue({

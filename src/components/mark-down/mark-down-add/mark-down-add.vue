@@ -45,6 +45,15 @@ export default {
         }, {
           label: 'Vue',
           value: 'Vue'
+        }, {
+          label: 'Html',
+          value: 'Html'
+        }, {
+          label: 'React',
+          value: 'React'
+        }, {
+          label: 'Http',
+          value: 'Http'
         }
       ],
       form: {
